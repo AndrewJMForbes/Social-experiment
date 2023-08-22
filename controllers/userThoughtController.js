@@ -42,13 +42,13 @@ module.exports = {
   async createThought(req, res) {
     try {
       const thoughtsData = await Thoughts.create(req.body);
-      const userData = await User.findOneAndUpdate(
+      const user= await User.findOneAndUpdate(
         { _id: req.body.userId },
-        { $push: { thoughts: thoughtsData._id } },
+        { $addToSet: { thoughts: thoughtsData._id } },
         { runValidators: true, new: true }
       );
-      if (!userData) {
-        return res.status(404).json({ message: "No user found with this id!" });
+      if (!user) {
+        return res.status(404).json({ message: "Thought posted but no user found with this id!" });
       }
       res.json({ message: "Thoughts created!" });
     } catch (error) {
